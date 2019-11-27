@@ -2,10 +2,9 @@
  * Hash Table with Separate Chaining policy
  */
 public class Hashtable {
-    HashNode[] bucket;
-    int bucket_size;
-    final double LOAD_THRESHOLD = 0.5;
-    int entries;
+    private HashNode[] bucket;
+    private int bucket_size;
+    private int entries;
 
     /**
      * Node of Chains
@@ -84,6 +83,7 @@ public class Hashtable {
             bucket[getHash(key)] =  node;
         }
         ++entries;
+        double LOAD_THRESHOLD = 0.5;
         if ((entries * 1.0) / bucket_size >= LOAD_THRESHOLD){
             increaseBucketSize();
         }
@@ -93,7 +93,7 @@ public class Hashtable {
      * Removes the key/value pair from the Hashtable instance.
      * @param key the key
      * @return the value associated with the key to the caller.
-     * @Exception the key is not present in the Hashtable instance.
+     * @exception NullPointerException the key is not present in the Hashtable instance.
      */
     String remove(String key) throws Exception{
         HashNode head = bucket[getHash(key)];
@@ -105,17 +105,16 @@ public class Hashtable {
             return head.value;
         }
         else {
-            HashNode prev = head;
-            HashNode curr = null;
-            while(prev.next != null){
-                curr = prev.next;
+            HashNode curr;
+            while(head.next != null){
+                curr = head.next;
                 if(curr.key.equals(key)){
-                    prev.next = curr.next;
+                    head.next = curr.next;
                     --entries;
                     return curr.value;
                 }
             }
-            return prev.next.value;
+            return head.next.value;
         }
     }
 
@@ -124,14 +123,14 @@ public class Hashtable {
      * @param key the key
      * @return the String to index after hash.
      */
-    int getHash(String key){
+    private int getHash(String key){
         return Math.abs(key.hashCode())% bucket_size;
     }
 
     /**
      * Increase the bucket size by times 2.
      */
-    void increaseBucketSize(){
+    private void increaseBucketSize(){
         HashNode[] temp = bucket;
         bucket_size = bucket_size *2;
         bucket = new HashNode[bucket_size];
